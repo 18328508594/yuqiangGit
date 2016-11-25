@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>日历控件</title>
+	<style type="text/css">
+
+		.Calendar a{
+			text-decoration: none;
+			color: #000;
+			display: inline-block;
+			width: 30px;
+			height: 30px;		
+			text-align: center;
+			line-height: 30px;
+			margin: 0;
+			
+		}
+		table{		
+			border-collapse: collapse;
+		}
+		.top-left-border{
+			border-top:grey 1px solid;
+			border-left:grey 1px solid;
+		}
+		.right-border{
+			border-right:grey 1px solid;
+
+		}
+		.bottom-border{
+			border-bottom:grey 1px solid;
+
+		}
+		.right-border{
+			border-right:grey 1px solid;
+		}
+       .forbidden,.forbidden a{
+       	 color: #aaa;
+       	 cursor: default;
+       }
+       .onToday{
+       	  font-weight: bold;
+       }
+	   .Calendar{
+		   text-align:center;
+		   width:220px;
+		   
+	   }
+	   #idCalendarPre:hover, #idCalendarNext:hover{
+		   cursor:pointer;
+	   }
+	</style>
+</head>
+<body>
+  <div class="Calendar">
+  	<div class="calendar-title">
+    <span id="idCalendarPre">&lt;&lt;&nbsp;&nbsp;</span>
+    <span id="idCalendarYear">2008</span>年 <span id="idCalendarMonth">8</span>月
+    <span id="idCalendarNext">&nbsp;&nbsp;&gt;&gt;</span>
+    </div>
+    <div>
+      <table cellspacing="0" cellpadding="0" >
+        <thead align="center">
+          <tr>
+            <td >日</td>
+            <td >一</td>
+            <td >二</td>
+            <td >三</td>
+            <td >四</td>
+            <td >五</td>
+            <td >六</td>
+          </tr>
+        </thead>
+        <tbody id="idCalendar">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="my"></div>
+  <div id="show"> </div>
+  <script type="text/javascript" src="js/canlendar.js"></script>
+
+</body>
+</html>

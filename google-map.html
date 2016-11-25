@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { 
+        height: 800px ;
+	      width:1200px;
+        margin:0 auto;
+      }
+    </style>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA4EBgCDNoY5yhNJofNrYpvwJ81vATNU5s&sensor=true">
+    //sensor 是否会使用 GPS 定位器等传感器来确定用户的位置,必须将该值明确设为 true 或 false
+    </script>
+    <script type="text/javascript">
+	     var xPos = 30.67;
+       var yPos = 104.06;
+       var defaultPosName = "成都市";
+      //初始化地图，使用Map类
+      function initialize(x,y,posName) {
+        var mapOptions = {
+          center: new google.maps.LatLng(x, y),   //指地图定位的坐标，需要LatLng对象，对象参数就是纬度和经度
+          zoom: 7,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        console.log(mapOptions.center);
+        var map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);//地图div对象的id名，这个div要指明高度和宽度要不地图没法初始化
+     
+      	var userMarker = new google.maps.Marker( {
+            position : new google.maps.LatLng(x,y),
+            map : map,
+            title : posName 
+        });
+		    var yourInfoWindow;
+        yourInfoWindow = new google.maps.InfoWindow( {});
+        yourInfoWindow.setContent(userMarker.title);
+				yourInfoWindow.open(map, userMarker);
+    		(function(userMarker) {
+    			google.maps.event.addListener(userMarker, 'click', function() {
+    				yourInfoWindow.open(map, userMarker);
+    			});
+    		})(userMarker);
+	  }
+	  
+
+    function searchPos(posName){
+        var geocoder = new google.maps.Geocoder();
+        var interGeoAnalysisFailed = "地点不存在";
+        geocoder.geocode( {
+            'address' : posName
+        }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                myLatLng = results[0].geometry.location;
+                //results数组里有很多有用的信息，包括坐标和返回的标准位置信息
+                initialize(myLatLng.lat(),myLatLng.lng(),posName);
+                //console.log(myLatLng.lat()+' '+myLatLng.lng());
+            } else {
+                alert(interGeoAnalysisFailed);
+            }
+        });
+    }
+	 
+   window.onload = function(){
+      initialize(xPos,yPos,defaultPosName);
+      var idPosName = document.getElementById("posName");
+      var idSearch = document.getElementById("search");
+      idSearch.onclick = function(){
+        searchPos(idPosName.value);
+      };
+   };
+	 
+    </script>
+  </head>
+  <body>
+    <div id="map_canvas"></div>
+    <input type="input" name="" id="posName">
+    <button id="search">搜索</button>
+  </body>
+</html>

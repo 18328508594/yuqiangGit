@@ -1,0 +1,178 @@
+var $=function(id){
+	return "string"===typeof id ? document.getElementById(id) : id;
+};
+
+var Class={
+	create : function(){
+		return function(){
+			this.initialize.apply(this,arguments);
+		}
+	}
+};
+
+Object.extend=function(destination,source){
+	for(var property in source){
+		destination[property] = source[property];
+	}
+	return destination;
+};
+
+var Calendar=Class.create();
+Calendar.prototype={
+	initialize : function(container,options){
+		this.Container = $(container); //table结构容器
+		this.Days = [];//日期列表
+		this.setOptions(options);
+		this.Year = this.options.Year;
+		this.Month = this.options.Month;
+		this.SelectDay = this.options.SelectDay ? new Date(this.options.SelectDay) : null;
+		this.onSelectDay = this.options.onSelectDay;
+		this.onToday = this.options.onToday;
+		this.onFinish  = this.options.onFinish;
+		this.Draw();
+	},
+
+	setOptions : function(options){
+		this.options = {//默认值
+			Year : new Date().getFullYear(),
+			Month : new Date().getMonth() + 1,
+			SelectDay : null,//选择日期
+			onSelectDay : function(){},
+			onToday : function(){},
+			onFinish : function(){}
+		};
+		Object.extend(this.options,options || {});
+	},
+
+	//上月
+	preMonth : function(){
+		//取得上月日期对象
+		var d = new Date(this.Year,this.Month-2,1);
+		//设置属性
+		this.Year = d.getFullYear();
+		this.Month = d.getMonth() + 1;
+		//重绘日历
+		this.Draw();
+	},
+    
+
+    //下一个月
+    nextMonth : function(){
+    	var d = new Date(this.Year,this.Month,1);
+    	this.Year = d.getFullYear();
+    	this.Month = d.getMonth() + 1;
+    	this.Draw();
+    },
+    //是否位于今天之前
+    beforeToday : function(d1){
+    	var d = new Date();
+    	d.setDate(d.getDate()-1);
+    	return d1 < d;
+    },
+
+    Draw : function(){
+    	//保存日期列表
+    	var arr = [];
+    	//用当月第一天在一周中的日期值作为当月离第一天的天数
+    	for(var i=1,firstDay = new Date(this.Year,this.Month-1,1).getDay();i <= firstDay;i++){
+    		arr.push(" ");
+    	}
+    	//用当月的最后一天在一个月中的日期值作为当月的天数
+    	for(var i=1,monthDay = new Date(this.Year,this.Month,0).getDate();i <= monthDay;i++){
+    		arr.push(i);
+    	}
+       // console.log(arr);
+        //console.log(arr.length);
+    	var frag = document.createDocumentFragment();
+    	this.Days = [];
+        while(arr.length > 0){
+        	//每个星期插入一个tr
+        	var row = document.createElement("tr");
+        	//星期
+        	for(var i = 1;i <= 7;i++){
+        		var cell = document.createElement("td");
+        		cell.innerHTML = " ";
+        		if(arr.length > 0){
+        			var d = arr.shift();
+        			cell.innerHTML = d;
+        			if (arr.length<7) {
+        				cell.className=cell.className+" bottom-border";
+        				if(arr.length===0){
+        					cell.className=cell.className+" right-border";
+        				}
+        			}
+        			if (d > 0) {
+        				this.Days[d] = cell;
+        				cell.className=cell.className+" top-left-border";
+        				if(i===7){
+        					cell.className=cell.className+" right-border";
+        				}
+        			}
+        		}	
+
+        		//获取今日
+        		if(this.isSame(new Date(this.Year,this.Month-1,d),new Date())){
+        			this.onToday(cell);
+        		}
+        		//判断用户是否作了选择
+        		if(this.SelectDay && this.isSame(new Date(this.Year,this.Month-1,d),this.SelectDay)){
+        			this.onSelectDay(cell);
+        		}
+        		row.appendChild(cell);
+        	}
+        	 frag.appendChild(row);
+        }
+        
+       //此先清空然后再插入
+       while(this.Container.hasChildNodes()){
+       	this.Container.removeChild(this.Container.firstChild);
+       }
+       this.Container.appendChild(frag);
+       this.onFinish();
+    },
+
+    //判断是否同一日
+    isSame : function(d1,d2){
+    	return (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate());
+    }
+};
+
+
+var cale = new Calendar("idCalendar",{
+	onSelectDay : function(o){
+		o.className =o.className+ " onSelect";
+	},
+	onToday : function(o){
+		o.className = o.className+" onToday";
+	},
+	onFinish : function(){
+		$("idCalendarYear").innerHTML = this.Year;
+		$("idCalendarMonth").innerHTML = this.Month;
+		
+		for(var i=1,len = this.Days.length;i <len; i++){	
+			this.Days[i].innerHTML = "<a href='javascript:void(0);' class='date'>"+i+"</a>";
+			if(this.beforeToday(new Date(this.Year,this.Month-1,i))){
+					this.Days[i].className=this.Days[i].className+" forbidden";
+			}else{
+				this.Days[i].onclick=function(e){
+					var show=$("show");
+					show.innerHTML=$("idCalendarYear").innerHTML+"年"+$("idCalendarMonth").innerHTML+"月"+e.target.firstChild.nodeValue+"日";
+					return false;
+					
+				}
+			}
+		}
+	}
+});
+
+$("idCalendarPre").onclick = function(e){
+	cale.preMonth();
+	
+};
+
+$("idCalendarNext").onclick = function(e){
+	cale.nextMonth();
+
+};
+
+
