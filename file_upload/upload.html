@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>無標題文件</title>
+<style type="text/css">
+.file-style{
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	width: 100%;
+	cursor:pointer;
+	height: 100%;
+}
+.icon-upload{
+	position: relative;
+	width: 300px;
+	height: 300px;
+	border: #ccc 1px solid;
+	display: inline-block;
+	
+}
+.icon-upload:nth-child(2),
+.icon-upload:nth-child(3),
+.icon-upload:nth-child(4),
+.icon-upload:nth-child(5){
+	display: none;
+}
+.icon-upload:hover{
+	background-color: #ff0;
+}
+.preview{
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+}
+</style>
+</head>
+
+<body>
+ <form id="imageform" method="post" enctype="multipart/form-data" action="insertintodb.php">
+	<div class="icon-upload" >
+		<input type="file" name="file[]" class="file-style" accept="image/*">
+		<img src="" alt='' class='preview'/>
+	</div>
+	<div class="icon-upload" >
+		<input type="file" name="file[]" class="file-style" accept="image/*">
+		<img src="" alt='' class='preview'/>
+	</div>
+	<div class="icon-upload" >
+		<input type="file" name="file[]" class="file-style" accept="image/*">
+		<img src="" alt='' class='preview'/>
+	</div>
+	<div class="icon-upload" >
+		<input type="file" name="file[]" class="file-style" accept="image/*">
+		<img src="" alt='' class='preview'/>
+	</div>
+	<div class="icon-upload" >
+		<input type="file" name="file[]" class="file-style" accept="image/*">
+		<img src="" alt='' class='preview'/>
+	</div>
+	<div>
+		<button id="btn" >上传</button>
+	</div>
+</form>
+<script src="js/jquery-3.1.0.js"></script>
+<script src="js/jquery.form.js"></script>
+<script type="text/javascript">
+var files=document.getElementsByClassName("file-style");
+for (var i = files.length - 1; i >= 0; i--) {
+	files[i].onchange=selectedIcon(i);
+ };
+function selectedIcon(index){
+	return function(){
+	 	var simpleFile=this.files[0];
+	 	if(!/image\/\w+/.test(simpleFile.type)) {
+	        alert("请确保文件类型为图像类型");
+	        return false;
+	    }
+	    var reader = new FileReader();
+	    // 将文件以Data URL形式进行读入页面
+	    reader.readAsDataURL(simpleFile);
+	    reader.onload = function(e){
+	        $("<img src='"+this.result+"' alt='' class='preview'/>").replaceAll(".icon-upload:nth-child("+(index+1)+") .preview");
+	        if (index<4) {
+	        	var elem='.icon-upload:nth-child('+(index+2)+')';
+	       		$(elem).css("display","inline-block");
+	        }
+	    }
+	};
+}
+
+var options = {
+   target: '#output',          //把服务器返回的内容放入id为output的元素中    
+   //beforeSubmit: showRequest,  //提交前的回调函数
+   success: showResponse,      //提交后的回调函数
+   //url: url,                 //默认是form的action， 如果申明，则会覆盖
+   //type: type,               //默认是form的method（get or post），如果申明，则会覆盖
+   dataType: "json",           //html(默认), xml, script, json...接受服务端返回的类型
+   //clearForm: true,          //成功提交后，清除所有表单元素的值
+   //resetForm: true,          //成功提交后，重置所有表单元素的值
+   timeout: 3000               //限制请求的时间，当请求大于3秒后，跳出请求
+}
+
+function showRequest(formData, jqForm, options){
+   //formData: 数组对象，提交表单时，Form插件会以Ajax方式自动提交这些数据，格式如：[{name:user,value:val },{name:pwd,value:pwd}]
+   //jqForm:   jQuery对象，封装了表单的元素   
+   //options:  options对象
+   var queryString = $.param(formData);   //name=1&address=2
+   var formElement = jqForm[0];              //将jqForm转换为DOM对象
+   var address = formElement.address.value;  //访问jqForm的DOM元素
+   return true;  //只要不返回false，表单都会提交,在这里可以对表单元素进行验证
+};
+
+function showResponse(responseText, statusText){
+   //dataType=xml
+ 	console.log("responseText=="+responseText);
+ 	console.log("statusText=="+statusText);
+};
+$("#btn").click(function(){
+	 
+	 $("#imageform").ajaxForm(options);
+});
+
+
+</script>
+</body>
+</html>
