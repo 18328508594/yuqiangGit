@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>無標題文件</title>
+<style type="text/css">
+.file-style{
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	width: 100%;
+	cursor:pointer;
+	height: 100%;
+}
+.icon-upload{
+	position: relative;
+	width: 160px;
+	height: 121px;
+	display: inline-block;
+	margin: 10px;
+}
+.icon-upload:nth-child(2),
+.icon-upload:nth-child(3),
+.icon-upload:nth-child(4),
+.icon-upload:nth-child(5){
+	display: none;
+}
+.preview{
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+}
+.delete{
+	background-image: url(img/delete.png);
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	display: none;
+	cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+	<div class="icon-upload" >
+		<img src="img/add.png" alt='' class='preview'/>
+		<div class="delete"></div>
+		<input type="file" name="file" class="file-style" accept="image/*">
+	</div>
+	<div class="icon-upload" >
+		<img src="img/add.png" alt='' class='preview'/>
+		<div class="delete"></div>
+		<input type="file" name="file" class="file-style" accept="image/*">
+	</div>
+	<div class="icon-upload" >
+		<img src="img/add.png" alt='' class='preview'/>
+		<div class="delete"></div>
+		<input type="file" name="file" class="file-style" accept="image/*">
+	</div>
+	<div class="icon-upload" >
+		<img src="img/add.png" alt='' class='preview'/>
+		<div class="delete"></div>
+		<input type="file" name="file" class="file-style" accept="image/*">
+	</div>
+	<div class="icon-upload" >
+		<img src="img/add.png" alt='' class='preview'/>
+		<div class="delete"></div>
+		<input type="file" name="file" class="file-style" accept="image/*">
+	</div>
+	<div>
+		<button id="btn" >上传</button>
+	</div>
+
+<script src="js/jquery-3.1.0.js"></script>
+<script src="js/jquery.form.js"></script>
+<script type="text/javascript">
+
+var lastFile;
+$(".file-style").each(function(index){
+	
+	$(this).change(lastFile,function(){
+		var that = this;
+		var simpleFile=this.files[0];
+		if(typeof simpleFile == "undefined"){
+			return;
+		}
+	 	if(!/image\/\w+/.test(simpleFile.type)) {
+	        alert("请确保文件类型为图像类型");
+	        return false;
+	    }
+	    var reader = new FileReader();
+	    // 将文件以Data URL形式进行读入页面
+	    reader.readAsDataURL(simpleFile);
+	    //reader.readAsBinaryString(simpleFile);
+	    reader.onload = function(e){
+	        $("<img src='"+this.result+"' alt='' class='preview'/>").replaceAll($(that).prev().prev());
+	        $(that).prev().css("display","inline-block");
+	       	$(that).parent().next(".icon-upload").css("display","inline-block");
+	    }
+	});
+});
+
+
+$(".delete").each(function(index){
+	$(this).click(function(){
+
+		//隐藏删除按钮
+		$(this).css("display","none");
+		//移除file
+		$(this).next().remove();
+		//获取当前delete元素父元素并隐藏
+		var thisParent=$(this).parent();
+		thisParent.css("display","none");
+		//插入btn之前
+		thisParent.insertBefore($("#btn").parent());
+		//新建file并添加到父元素
+		var newFile = $("<input type='file' name='file[]' class='file-style' accept='image/\*'>");
+		newFile.appendTo(thisParent);
+		//设置newFile  change事件
+		newFile.change(function(){
+			var that = this;
+			var simpleFile=this.files[0];
+			if(typeof simpleFile == "undefined"){
+				return;
+			}
+		 	if(!/image\/\w+/.test(simpleFile.type)) {
+		        alert("请确保文件类型为图像类型");
+		        return false;
+		    }
+		    var reader = new FileReader();
+		    // 将文件以Data URL形式进行读入页面
+		    reader.readAsDataURL(simpleFile);
+		    reader.onload = function(e){
+		       	$("<img src='"+this.result+"' alt='' class='preview'/>").replaceAll($(that).prev().prev());
+		       	$(that).prev().css("display","inline-block");
+		       	$(that).parent().next(".icon-upload").css("display","inline-block");
+		    }
+		});
+
+		//将当前元素前一元素src属性重置
+		$(this).prev().attr("src","img/add.png");
+
+		//获取第一个被未被添加图片的元素的父元素，判断其状态并改变
+		var firstHidden = $("img[src='img/add.png']:first").parent();
+		if(firstHidden.css("display")=="none"){
+			firstHidden.css("display","inline-block");
+		}
+	});
+		
+});
+$("#btn").click(function(){
+	console.log("clicked");
+	var img=$("img.preview:not([src='img/add.png'])");
+	var srcs=new Array();
+	img.each(function(index,element){
+		srcs.push($(this).attr("src"));
+	});
+	$.post("insertintodbAsBinary.php",{"src[]":srcs},function(data){
+		console.log(data);
+	});
+});
+
+
+</script>
+</body>
+</html>
