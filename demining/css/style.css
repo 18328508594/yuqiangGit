@@ -1,0 +1,33 @@
+@charset "utf-8";
+/* CSS Document */
+#mine,
+#flag{
+	display: none;
+}
+table{
+	border: 1px solid #ffaafa;
+}
+td{
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	border: 1px solid #cccccc;
+	margin:0 1px;
+}
+#remain-mine-number,
+#time,
+#start{
+	font-weight: bold;
+	font-size: 20px;
+}
+#start{
+	background-color: #aa00ff;
+	height: 30px;
+	width: 110px;
+	border:#cccccc 1px solid;
+	text-align: center;
+	line-height: 30px;
+}
+#start:hover{
+	cursor: pointer;
+}
