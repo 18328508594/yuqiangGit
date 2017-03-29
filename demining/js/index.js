@@ -35,6 +35,7 @@ form.onclick = function(e){
 		}else{
 			curLevel = level3;
 		}
+		clearInterval(timerId);
 		gameStarted = false;
 		remainMineNumber = curLevel.mineNum;
 		timing = 0;
@@ -47,6 +48,9 @@ var timerId;//定时器句柄
 var start = document.getElementById("start");
 start.onclick = function(){
 	timing = 0;
+	timeObj.innerHTML = "游戏用时: " +　timing;
+	remainMineNumber = curLevel.mineNum;
+	remainMineNumberObj.innerHTML = "剩余地雷数: " + remainMineNumber;
 	timeObj.innerHTML = "游戏用时: " +　timing;
 	init();		
 	clearInterval(timerId);
@@ -134,6 +138,7 @@ function drawRect(){
 	var canvas = document.createElement("canvas");
 	canvas.width = 30;
 	canvas.height = 30;
+	canvas["data-flag"] = -99;//是否为未点击
 	if (canvas.getContext) {
 		var ctx = canvas.getContext("2d");
 		ctx.fillStyle = "#666666";
@@ -237,12 +242,27 @@ function leftClick(e){
 			gameStarted = false;
 			clearInterval(timerId);
 			alert("失败");
+			return;
 		}else if (flagNum === 0 ) {
 			findPlaceRect(x,y);
 		}else{
 			target.removeChild(target.firstChild);//删除td子节点
 			target.appendChild(drawDigit(flagNum));
 		}
+	}
+	if (remainMineNumber === 0) {
+		var isOver = true;//判断是否全部点击完毕
+		var canvases = document.getElementsByTagName("canvas");
+			for (var i = canvases.length - 1; i >= 0; i--) {
+				if (canvases[i]["data-flag"] === -99) {
+					isOver = false;
+				}
+			}
+			if (isOver) {
+				gameStarted = false;
+				clearInterval(timerId);
+				alert("成功");
+		    }
 	}
 }
 
@@ -264,9 +284,19 @@ function rightClick(e){
 			remainMineNumber--;
 			remainMineNumberObj.innerHTML = "剩余地雷数: " + remainMineNumber;
 			if (remainMineNumber === 0) {
-				gameStarted = false;
-				clearInterval(timerId);
-				alert("成功");
+				var isOver = true;//判断是否全部点击完毕
+				var canvases = document.getElementsByTagName("canvas");
+				for (var i = canvases.length - 1; i >= 0; i--) {
+					if (canvases[i]["data-flag"] === -99) {
+						isOver = false;
+					}
+				}
+				if (isOver) {
+					gameStarted = false;
+					clearInterval(timerId);
+					alert("成功");
+				}
+				
 			}
 		}
 	}
