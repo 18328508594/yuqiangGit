@@ -1,0 +1,44 @@
+body{
+  padding:20px;
+}
+.bg-color{
+  background-color:#ffffff;
+}
+p{
+  text-indent:16px;
+}
+h4{
+  padding-left:15px;
+  border-left:5px solid blue;
+  font-size:20px;
+  font-weight:bolder;
+}
+h5{
+  font-size:18px;
+  font-weight:bolder;
+}
+#character-life{
+  margin-top:20px;
+}
+#character-life>h3,
+#character-evaluation>h3{
+  font-size:22px;
+  font-weight:bolder;
+  padding-left:15px;
+  border-left:10px solid blue;
+  margin-left:-25px;
+}
+#character-life h6{
+  margin:20px 0;
+  font-size:18px;
+}
+.col-md-10>p{
+  margin-left:-15px;
+}
+p>span{
+  font-size:13px;
+}
+#reference-material>h6{
+  border-bottom:2px solid #666666;
+  padding:15px 0;
+}

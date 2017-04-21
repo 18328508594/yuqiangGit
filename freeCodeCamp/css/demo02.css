@@ -1,0 +1,50 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+  position: relative;
+}
+.navbar-brand{
+	padding: 0 15px;
+}
+.flag-icon,
+.href-icon{
+	width: 50px;
+	height: 50px;
+}
+.href-icon{
+	margin: 0 10px;
+	border-radius: 50%;
+}
+#about,
+#portfolio{
+	padding-top: 100px;
+	padding-bottom: 15px;
+	border-bottom: 2px solid #eeeeee;
+}
+#about img{
+	margin: 3px auto;
+}
+#about p{
+	font-size: 24px;
+	color: #6ac13c;
+	font-family: "Times New Roman",Georgia,Serif;
+}
+#portfolio img{
+	width: 80%;
+	margin: 5px auto;
+	height: 300px;
+}
+#portfolio h6{
+	font-size: 20px;
+	color: #af00aa;
+	padding-left: 20px;
+}
+#portfolio .col-sm-6{
+	margin: 10px auto;
+
+}
+#footer{
+	height: 150px;
+	background-color: #6a6a6a;
+	padding: 50px;
+}
